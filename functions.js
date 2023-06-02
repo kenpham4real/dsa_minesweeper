@@ -13,10 +13,9 @@ function GenBoard() {
   // let rowCount = window.prompt("Enter the number of rows:");
   // let columnCount = window.prompt("Enter the number of columns:");
   // let mineCount = window.prompt("Enter the number of mines");
-  // Just a testing line of code
-  let rowCount = 15;
-  let columnCount = 15;
-  let mineCount = 5;
+  let rowCount = 5;
+  let columnCount = 5;
+  let mineCount = 2;
   setBoard(rowCount, columnCount);
   setMineCount(mineCount);
 }
@@ -233,4 +232,19 @@ function leftClick(cell) {
     }
   }
   won();
+}
+
+/**
+ * @author Ken Pham
+ * @user_story https://trello.com/c/9LAOaBas
+ */
+const won = () => {
+  console.log('Run function won');
+  console.log('cellsUnboxed', cellsUnboxed); 
+  console.log('flagged', flagged);
+	if(cellsUnboxed+flagged === (rows*rows)) {
+		window.alert('You Won');
+		isWon = true;
+		// reveal();
+	}
 }
