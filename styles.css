@@ -48,7 +48,7 @@ body {
 }
 
 .uncovered {
-  background-color: white;
+  background-color: gray;
   border: 1px solid black;
   transition: 0.1s cubic-bezier(0.42, 0, 0.59, 2.72);
 }
