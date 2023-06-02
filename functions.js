@@ -247,6 +247,55 @@ function rightClick(cell) {
 	won();
 }
 
+function updateCellValues() {
+	// console.log(mineSpots);
+	const cells = document.querySelectorAll('.cell');
+	
+	cells.forEach( cell => {
+		const i = cell.dataset.index - 1;
+		if(mineSpots.indexOf(i)!== -1) {
+			cell.setAttribute('data-value', -1);
+			return;
+		}
+		let mineCount = 0;
+		const directions = directionsToCheck(i+1);
+		if(directions[0]) { //if above needs to be checked
+			if(mineSpots.indexOf(i-rows)!== -1) // check north
+				++mineCount;
+			if(directions[2]) { //if right
+				if(mineSpots.indexOf(i-rows+1)!== -1) // check NE
+					++mineCount;
+			}
+			if(directions[3]) { //if left
+				if(mineSpots.indexOf(i-rows-1)!== -1) //check NW
+					++mineCount;
+			}
+		}
+		if(directions[1]) { //if below
+			if(mineSpots.indexOf(i+rows)!== -1) //check south
+				++mineCount;
+			if(directions[2]) { //if right
+				if(mineSpots.indexOf(i+rows+1)!== -1) //check SE
+					++mineCount;
+			}
+			if(directions[3]) { //if left
+				if(mineSpots.indexOf(i+rows-1)!== -1) //check SW
+					++mineCount;
+			}
+		}
+		if(directions[2]) { //if right
+			if(mineSpots.indexOf(i+1)!== -1) //check E
+				++mineCount;
+		}
+		if(directions[3]) { //if left
+			if(mineSpots.indexOf(i-1)!== -1) //check W
+				++mineCount;
+		}
+		cell.setAttribute('data-value', mineCount);
+	})
+	// console.log(directionsToCheck(1));
+}
+
 /**
  * @author Ken Pham
  * @user_story https://trello.com/c/9LAOaBas
