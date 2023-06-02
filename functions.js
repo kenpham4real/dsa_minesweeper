@@ -3,7 +3,9 @@ let mineCell = [];
 let cellsUnboxed = 0,
   flagged = 0,
   GameOver = false,
-  hasWon = false;
+  hasWon = false,
+  unboxedCellsStack = []; // Clear the unboxed cells stack
+
 
 function GenBoard() {
   cellsUnboxed = 0;
@@ -23,7 +25,10 @@ function GenBoard() {
 function handleClick(e) {
   if (GameOver) return;
   if (e.target.classList.contains("uncovered")) return;
-  if (e.button === 0) leftClick(e.target);
+  if (e.button === 0) {
+    leftClick(e.target);
+    unboxedCellsStack.push(e.target); // Store the unboxed cell in the stack
+  }
   else if (e.button === 2) {
     e.preventDefault();
     rightClick(e.target);
@@ -104,6 +109,19 @@ function directionsToCheck(cellNumber) {
   return result;
 }
 
+function rightClick(cell) {
+	if(cell.innerHTML === '' && flagged<mines) {
+		cell.innerHTML = '🚩';
+		++flagged;
+	}
+	else {
+		cell.innerHTML = '';
+		--flagged;
+	}
+	document.querySelector('#count').innerHTML = mines - flagged;
+	won();
+}
+
 function updateCellValues() {
   // console.log(mineCell);
   const cells = document.querySelectorAll(".cell");
@@ -172,8 +190,9 @@ function updateCellValues() {
 
 function leftClick(cell) {
   if (cell.innerHTML === "🚩") return;
-  ++cellsUnboxed;
+  cellsUnboxed++;
   cell.classList.remove("covered");
+  
   if (cell.dataset.value === "-1") {
     // console.log('mine');
     cell.classList.add("uncovered");
@@ -182,7 +201,9 @@ function leftClick(cell) {
     setTimeout(() => {
       window.alert("You clicked on a mine. You lost!");
     }, 1500);
-  } else {
+  } 
+  
+  else {
     if (cell.dataset.value === "0") {
       const i = +cell.dataset.index;
       cell.classList.add("uncovered");
@@ -234,68 +255,6 @@ function leftClick(cell) {
   won();
 }
 
-function rightClick(cell) {
-	if(cell.innerHTML === '' && flagged<mines) {
-		cell.innerHTML = '🚩';
-		++flagged;
-	}
-	else {
-		cell.innerHTML = '';
-		--flagged;
-	}
-	document.querySelector('#count').innerHTML = mines - flagged;
-	won();
-}
-
-function updateCellValues() {
-	// console.log(mineSpots);
-	const cells = document.querySelectorAll('.cell');
-	
-	cells.forEach( cell => {
-		const i = cell.dataset.index - 1;
-		if(mineSpots.indexOf(i)!== -1) {
-			cell.setAttribute('data-value', -1);
-			return;
-		}
-		let mineCount = 0;
-		const directions = directionsToCheck(i+1);
-		if(directions[0]) { //if above needs to be checked
-			if(mineSpots.indexOf(i-rows)!== -1) // check north
-				++mineCount;
-			if(directions[2]) { //if right
-				if(mineSpots.indexOf(i-rows+1)!== -1) // check NE
-					++mineCount;
-			}
-			if(directions[3]) { //if left
-				if(mineSpots.indexOf(i-rows-1)!== -1) //check NW
-					++mineCount;
-			}
-		}
-		if(directions[1]) { //if below
-			if(mineSpots.indexOf(i+rows)!== -1) //check south
-				++mineCount;
-			if(directions[2]) { //if right
-				if(mineSpots.indexOf(i+rows+1)!== -1) //check SE
-					++mineCount;
-			}
-			if(directions[3]) { //if left
-				if(mineSpots.indexOf(i+rows-1)!== -1) //check SW
-					++mineCount;
-			}
-		}
-		if(directions[2]) { //if right
-			if(mineSpots.indexOf(i+1)!== -1) //check E
-				++mineCount;
-		}
-		if(directions[3]) { //if left
-			if(mineSpots.indexOf(i-1)!== -1) //check W
-				++mineCount;
-		}
-		cell.setAttribute('data-value', mineCount);
-	})
-	// console.log(directionsToCheck(1));
-}
-
 /**
  * @author Ken Pham
  * @user_story https://trello.com/c/9LAOaBas
@@ -306,7 +265,28 @@ const won = () => {
   console.log('flagged', flagged);
 	if(cellsUnboxed+flagged === (rows*rows)) {
 		window.alert('You Won');
-		isWon = true;
+		hasWon = true;
 		// reveal();
 	}
+}
+const undoClick = () => {
+  console.log('run undo');
+  while (unboxedCellsStack.length > 0) {
+    const lastClickedCell = unboxedCellsStack.pop();
+    if (lastClickedCell.classList.contains('uncovered')) {
+      lastClickedCell.classList.remove('uncovered');
+      lastClickedCell.classList.add('covered');
+      lastClickedCell.innerHTML = '';
+      cellsUnboxed--;
+    }
+  }
+  flagged = 0; // Reset the flagged count
+  won(); // Check for win condition
+};
+
+
+// Add an event listener to the undo button
+const undoButton = document.querySelector('#undoButton');
+if (undoButton) {
+  undoButton.addEventListener('click', undoClick);
 }
