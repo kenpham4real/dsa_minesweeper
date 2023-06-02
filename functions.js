@@ -4,8 +4,8 @@ let cellsUnboxed = 0,
   flagged = 0,
   GameOver = false,
   hasWon = false,
+  newUnboxedCellsStack = [],
   unboxedCellsStack = []; // Clear the unboxed cells stack
-
 
 function GenBoard() {
   cellsUnboxed = 0;
@@ -27,12 +27,18 @@ function handleClick(e) {
   if (e.target.classList.contains("uncovered")) return;
   if (e.button === 0) {
     leftClick(e.target);
-    unboxedCellsStack.push(e.target); // Store the unboxed cell in the stack
+    handleUnboxedCellsStack();
   }
   else if (e.button === 2) {
     e.preventDefault();
     rightClick(e.target);
+    handleUnboxedCellsStack();
   }
+}
+
+const handleUnboxedCellsStack = () => {
+  unboxedCellsStack.push(newUnboxedCellsStack)
+  newUnboxedCellsStack = []
 }
 
 function setBoard(rowCount, columnCount) {
@@ -119,6 +125,7 @@ function rightClick(cell) {
 		--flagged;
 	}
 	document.querySelector('#count').innerHTML = mines - flagged;
+  newUnboxedCellsStack.push(cell);
 	won();
 }
 
@@ -204,6 +211,7 @@ function leftClick(cell) {
   } 
   
   else {
+    newUnboxedCellsStack.push(cell); // Store the unboxed cell in the stack
     if (cell.dataset.value === "0") {
       const i = +cell.dataset.index;
       cell.classList.add("uncovered");
@@ -241,6 +249,7 @@ function leftClick(cell) {
         //if left
         regions.push(i - 1);
       }
+      
       regions.forEach((region) => {
         const cellToUncover = document.querySelector(
           `.covered[data-index="${region}"]`
@@ -251,6 +260,7 @@ function leftClick(cell) {
       cell.classList.add("uncovered");
       cell.innerHTML = cell.dataset.value;
     }
+    
   }
   won();
 }
@@ -260,23 +270,31 @@ function leftClick(cell) {
  * @user_story https://trello.com/c/9LAOaBas
  */
 const won = () => {
-  console.log('Run function won');
-  console.log('cellsUnboxed', cellsUnboxed); 
-  console.log('flagged', flagged);
 	if(cellsUnboxed+flagged === (rows*rows)) {
 		window.alert('You Won');
 		hasWon = true;
 		// reveal();
 	}
 }
+/**
+ * @author Ken Pham
+ * @user_story https://trello.com/c/uwE2Ec6R
+ */
 const undoClick = () => {
-  console.log('run undo');
-  while (unboxedCellsStack.length > 0) {
-    const lastClickedCell = unboxedCellsStack.pop();
-    if (lastClickedCell.classList.contains('uncovered')) {
-      lastClickedCell.classList.remove('uncovered');
-      lastClickedCell.classList.add('covered');
-      lastClickedCell.innerHTML = '';
+  
+  let lastClickedCell = unboxedCellsStack.pop();
+  console.log('lastClickedCell', lastClickedCell)
+  for (let i in lastClickedCell) {
+
+    if (lastClickedCell[i].classList.contains('uncovered')) {
+      lastClickedCell[i].classList.remove('uncovered');
+      lastClickedCell[i].classList.add('covered');
+      lastClickedCell[i].innerHTML = '';
+      cellsUnboxed--;
+    }else{
+      lastClickedCell[i].classList.remove('uncovered');
+      lastClickedCell[i].classList.add('covered');
+      lastClickedCell[i].innerHTML = '';
       cellsUnboxed--;
     }
   }
