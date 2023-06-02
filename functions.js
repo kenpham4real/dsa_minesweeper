@@ -234,6 +234,19 @@ function leftClick(cell) {
   won();
 }
 
+function rightClick(cell) {
+	if(cell.innerHTML === '' && flagged<mines) {
+		cell.innerHTML = '🚩';
+		++flagged;
+	}
+	else {
+		cell.innerHTML = '';
+		--flagged;
+	}
+	document.querySelector('#count').innerHTML = mines - flagged;
+	won();
+}
+
 /**
  * @author Ken Pham
  * @user_story https://trello.com/c/9LAOaBas
