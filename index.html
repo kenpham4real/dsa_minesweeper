@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+      charset="utf-8"
+    />
+    <title>Minesweeper</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <script type="text/javascript" src="./functions.js"></script>
+  </head>
+  <body>
+    <div class="game-wrapper">
+      <div class="inputs">
+        <button type="button" class="btn btn-new-game" onclick="GenBoard()">
+          Play Game
+        </button>
+      </div>
+      <div class="board" oncontextmenu=" return false"></div>
+      <div class="mine-count">Mines Left:<span id="count"></span></div>
+    </div>
+  </body>
+</html>
