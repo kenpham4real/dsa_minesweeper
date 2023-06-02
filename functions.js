@@ -13,6 +13,7 @@ function GenBoard() {
   // let rowCount = window.prompt("Enter the number of rows:");
   // let columnCount = window.prompt("Enter the number of columns:");
   // let mineCount = window.prompt("Enter the number of mines");
+  // Just a testing line of code
   let rowCount = 15;
   let columnCount = 15;
   let mineCount = 5;
