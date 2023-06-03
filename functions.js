@@ -276,7 +276,8 @@ const won = () => {
   console.log("cellsUnboxed", cellsUnboxed);
   console.log("flagged", flagged);
   console.log("rows", rows);
-  if (cellsUnboxed + flagged === rows * rows || mines === 0) {
+  console.log("columns", columns);
+  if (cellsUnboxed + flagged === rows * columns || mines === 0) {
     window.alert("You Won");
     hasWon = true;
     reveal();
