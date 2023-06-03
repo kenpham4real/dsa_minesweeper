@@ -289,6 +289,7 @@ const won = () => {
     window.alert("You Won");
     hasWon = true;
     reveal();
+    return;
   }
 };
 /**
@@ -308,6 +309,7 @@ const reveal = () => {
     } else cell.innerHTML = cell.dataset.value;
   });
   hasGameOver = true;
+  return;
 };
 /**
  * @author Ken Pham
