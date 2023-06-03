@@ -7,22 +7,26 @@ let cellsUnboxed = 0,
   newUnboxedCellsStack = [],
   unboxedCellsStack = []; // Clear the unboxed cells stack
 
-function GenBoard() {
-  cellsUnboxed = 0;
-  flagged = 0;
-  hasGameOver = false;
-  hasWon = false;
-  // let rowCount = window.prompt("Enter the number of rows:"); let columnCount =
-  // window.prompt("Enter the number of columns:"); let mineCount =
-  // window.prompt("Enter the number of mines");
-  let rowCount = 5;
-  let columnCount = 5;
-  let mineCount = 10;
-  setBoard(rowCount, columnCount);
-  setMineCount(mineCount);
-}
+// function GenBoard() {
+//   cellsUnboxed = 0;
+//   flagged = 0;
+//   hasGameOver = false;
+//   hasWon = false;
+//   let rowCount = window.prompt("Enter the number of rows:"); let columnCount =
+//   window.prompt("Enter the number of columns:"); let mineCount =
+//   window.prompt("Enter the number of mines");
+//   // let rowCount = 5;
+//   // let columnCount = 5;
+//   // let mineCount = 10;
+//   setBoard(rowCount, columnCount);
+//   setMineCount(mineCount);
+// }
 
-function handleClick(e) {
+/**
+ * 
+ * @summary đổi từ handleClick --> onPlayerClick
+ */
+function onPlayerClick(e) {
   if (hasGameOver) return;
   if (e.target.classList.contains("uncovered")) return;
   if (e.button === 0) {
@@ -71,7 +75,7 @@ function setBoard(rowCount, columnCount) {
 
   const cells = document.querySelectorAll(".cell");
   cells.forEach((cell) =>
-    cell.addEventListener("mousedown", (e) => handleClick(e))
+    cell.addEventListener("mousedown", (e) => onPlayerClick(e))
   );
 }
 
@@ -84,12 +88,14 @@ function setMineCount(mineCount) {
     init();
   } else {
     mines = +mineCount;
-    plantMines();
+    placeMines();
   }
   document.querySelector("#count").innerHTML = mines - flagged;
 }
-
-function plantMines() {
+/**
+ * @summary đổi từ plantMines --> placeMines
+ */
+function placeMines() {
   let landMines = [];
   while (landMines.length < mines) {
     let num = Math.floor(Math.random() * rows * columns);
@@ -103,8 +109,10 @@ function plantMines() {
   mineCell = landMines;
   updateCellValues();
 }
-
-function directionsToCheck(cellNumber) {
+/**
+ * @summary đổi từ directionsToCheck --> onCheckingDirections
+ */
+function onCheckingDirections(cellNumber) {
   const i = cellNumber - 1;
   let result = [1, 1, 1, 1];
   if (i < rows || i < columns) result[0] = 0;
@@ -138,7 +146,7 @@ function updateCellValues() {
       return;
     }
     let mineCount = 0;
-    const directions = directionsToCheck(i + 1);
+    const directions = onCheckingDirections(i + 1);
     if (directions[0]) {
       //if above needs to be checked
       if (mineCell.indexOf(i - rows) !== -1)
@@ -189,7 +197,7 @@ function updateCellValues() {
     }
     cell.setAttribute("data-value", mineCount);
   });
-  // console.log(directionsToCheck(1));
+  // console.log(onCheckingDirections(1));
 }
 
 function leftClick(cell) {
@@ -200,7 +208,7 @@ function leftClick(cell) {
   if (cellsUnboxed === 1) {
     if (cell.dataset.value === "-1") {
       while (cell.dataset.value === "-1") {
-        plantMines();
+        placeMines();
       }
       updateCellValues();
     }
@@ -219,7 +227,7 @@ function leftClick(cell) {
     if (cell.dataset.value === "0") {
       const i = +cell.dataset.index;
       cell.classList.add("uncovered");
-      const directions = directionsToCheck(i);
+      const directions = onCheckingDirections(i);
       const regions = [];
       if (directions[0]) {
         //if above needs to be checked
